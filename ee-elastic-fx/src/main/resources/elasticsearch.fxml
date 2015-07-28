@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import eugeis.elasticsearch.ui.fx.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml" fx:controller="eugeis.elasticsearch.ui.fx.ElasticSearchController">
+  <children>
+    <TabPane id="tabPane1" prefHeight="566.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="34.0">
+      <tabs>
+        <Tab id="tab1" text="Browser">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="479.0" prefWidth="800.0">
+              <children>
+                <AnchorPane id="anchorPane3" prefHeight="530.0" prefWidth="168.0" AnchorPane.leftAnchor="0.0">
+                  <children>
+                    <VBox id="VBox" prefHeight="528.0" prefWidth="166.0" spacing="5.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
+                      <children>
+                        <ChoiceBox fx:id="allIndices" prefWidth="166.0" />
+                        <VBox id="vBox1">
+                          <children>
+                            <VBox id="vBox2" fx:id="indices" />
+                          </children>
+                        </VBox>
+                        <Separator id="separatorHorizontal1" prefWidth="200.0" />
+                        <VBox id="vBox1">
+                          <children>
+                            <VBox id="vBox2" fx:id="types" />
+                          </children>
+                        </VBox>
+                        <Separator id="separatorHorizontal2" prefWidth="200.0" />
+                        <VBox id="vBox1">
+                          <children>
+                            <VBox id="vBox2" fx:id="fields" />
+                          </children>
+                        </VBox>
+                      </children>
+                      <padding>
+                        <Insets bottom="2.0" left="3.0" right="2.0" top="3.0" />
+                      </padding>
+                    </VBox>
+                  </children>
+                </AnchorPane>
+                <AnchorPane id="anchorPane4" prefHeight="530.0" prefWidth="635.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="171.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <children>
+                    <SplitPane id="splitPaneVertical1" dividerPositions="0.6003787878787878" focusTraversable="true" orientation="VERTICAL" prefHeight="530.0" prefWidth="629.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                      <items>
+                        <AnchorPane id="anchorPane1" fx:id="tablePane" minHeight="0.0" minWidth="0.0" prefHeight="309.0" prefWidth="626.0">
+                          <children>
+                            <VBox id="VBox" alignment="CENTER" prefHeight="261.0" prefWidth="626.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <children>
+                                <AnchorPane id="anchorPane5" prefHeight="24.0" prefWidth="626.0">
+                                  <children>
+                                    <Label id="label1" fx:id="searchStatus" alignment="TOP_LEFT" prefHeight="24.0" prefWidth="547.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="79.0" AnchorPane.topAnchor="0.0" />
+                                    <ChoiceBox fx:id="rowCount" prefHeight="22.0" prefWidth="74.0" AnchorPane.bottomAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
+                                      <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                          <Integer fx:value="50" />
+                                          <Integer fx:value="100" />
+                                          <Integer fx:value="200" />
+                                          <Integer fx:value="500" />
+                                          <Integer fx:value="1000" />
+                                        </FXCollections>
+                                      </items>
+                                    </ChoiceBox>
+                                  </children>
+                                </AnchorPane>
+                                <TableView fx:id="resultTable" prefHeight="201.0" prefWidth="626.0" VBox.vgrow="ALWAYS" />
+                                <ToolBar id="toolBar1" fx:id="actions" prefHeight="29.0" prefWidth="595.0">
+                                  <items>
+                                    <Button id="button1" text="Delete" />
+                                  </items>
+                                </ToolBar>
+                              </children>
+                            </VBox>
+                          </children>
+                        </AnchorPane>
+                        <AnchorPane id="anchorPane2" fx:id="details" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                      </items>
+                    </SplitPane>
+                  </children>
+                  <padding>
+                    <Insets left="1.0" />
+                  </padding>
+                </AnchorPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab id="tab2" text="Overview">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <SplitPane id="splitPaneVertical2" dividerPositions="0.5" focusTraversable="true" orientation="VERTICAL" prefHeight="530.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <items>
+                    <AnchorPane id="anchorPane6" minHeight="0.0" minWidth="0.0" prefHeight="188.0" prefWidth="798.0">
+                      <children>
+                        <VBox id="vBox3" prefHeight="208.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <children>
+                            <TableView id="tableView1" fx:id="indicesTable" editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                              <columns>
+                                <TableColumn prefWidth="150.0" text="Index">
+                                  <!-- <cellValueFactory>
+                                    <MapValueFactory key="index" />
+                                  </cellValueFactory> -->
+                                </TableColumn>
+                                <TableColumn prefWidth="75.0" text="Size">
+                                  <!-- <cellValueFactory>
+                                    <MapValueFactory key="size" />
+                                  </cellValueFactory> -->
+                                </TableColumn>
+                                <TableColumn prefWidth="75.0" text="Docs">
+                                  <!-- <cellValueFactory>
+                                    <MapValueFactory key="docs" />
+                                  </cellValueFactory> -->
+                                </TableColumn>
+                                <TableColumn prefWidth="75.0" text="Aliases">
+                                  <!-- <cellValueFactory>
+                                    <MapValueFactory key="aliases" />
+                                  </cellValueFactory> -->
+                                </TableColumn>
+                              </columns>
+                            </TableView>
+                            <ToolBar id="toolBar2">
+                              <items>
+                                <Button id="button3" fx:id="newAliasIndex" onAction="#newAliasIndex" text="New Alias..." />
+                                <Button id="button4" fx:id="refreshIndex" onAction="#refreshIndex" text="Refresh" />
+                                <Button id="button5" fx:id="refreshFlush" onAction="#refreshFlush" text="Flush" />
+                                <Button id="button6" fx:id="gatewaySnapshot" onAction="#gatewaySnapshot" text="Gateway Snapshot" />
+                                <Button id="button8" fx:id="testAnalyzer" onAction="#testAnalyzer" text="Test Analyzer" />
+                                <Button id="button9" fx:id="closeIndex" onAction="#closeIndex" text="Close" />
+                                <Button id="button10" fx:id="newIndex" onAction="#newIndex" text="New Index" />
+                                <Button id="button7" fx:id="deleteIndex" onAction="#deleteIndex" text="Delete..." />
+                              </items>
+                            </ToolBar>
+                          </children>
+                        </VBox>
+                      </children>
+                    </AnchorPane>
+                    <AnchorPane id="anchorPane7" fx:id="overviewDetails" minHeight="0.0" minWidth="0.0" prefHeight="343.0" prefWidth="798.0">
+                      <children>
+                        <TabPane id="tabPane2" prefHeight="314.0" prefWidth="798.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <tabs>
+                            <Tab id="tab5" text="Mappings">
+                              <content>
+                                <AnchorPane id="Content" fx:id="detailsMappings" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                  <children>
+                                    <SplitPane id="splitPaneHorizontal1" dividerPositions="0.25" focusTraversable="true" prefHeight="278.0" prefWidth="798.0000999999975" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <items>
+                                        <AnchorPane id="anchorPane8" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                          <children>
+                                            <VBox id="vBox4" prefHeight="276.0" prefWidth="196.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
+                                              <children>
+                                                <Label id="label5" text="Types">
+                                                  <VBox.margin>
+                                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" fx:id="x1" />
+                                                  </VBox.margin>
+                                                </Label>
+                                                <ListView id="listView1" fx:id="detailsTypes" prefHeight="261.0" prefWidth="196.0" VBox.margin="$x1" VBox.vgrow="ALWAYS" />
+                                              </children>
+                                            </VBox>
+                                          </children>
+                                        </AnchorPane>
+                                        <AnchorPane id="anchorPane9" minHeight="0.0" minWidth="0.0" prefHeight="276.0" prefWidth="647.0">
+                                          <children>
+                                            <VBox id="vBox5" prefHeight="223.0" prefWidth="634.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                              <children>
+                                                <AnchorPane id="anchorPane10" fx:id="detailsTypeMapping" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                                <ToolBar id="toolBar3">
+                                                  <items>
+                                                    <Button id="button11" onAction="#editMapping" text="Edit" />
+                                                    <Button id="button12" onAction="#cancelMapping" text="Cancel" />
+                                                    <Button id="button13" onAction="#saveMapping" text="Save..." />
+                                                  </items>
+                                                </ToolBar>
+                                              </children>
+                                            </VBox>
+                                          </children>
+                                        </AnchorPane>
+                                      </items>
+                                    </SplitPane>
+                                  </children>
+                                </AnchorPane>
+                              </content>
+                            </Tab>
+                            <Tab id="tab3" text="Status">
+                              <content>
+                                <AnchorPane id="Content" fx:id="detailsStatus" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </Tab>
+                            <Tab id="tab4" text="Metadata">
+                              <content>
+                                <AnchorPane id="Content" fx:id="detailsMetadata" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                      </children>
+                    </AnchorPane>
+                  </items>
+                </SplitPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+    <HBox id="HBox" alignment="CENTER" layoutY="6.0" spacing="15.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="1.0">
+      <children>
+        <Label id="label2" prefHeight="24.0" prefWidth="145.0" text="ElasticSearch" />
+        <HBox id="HBox" alignment="CENTER" spacing="5.0">
+          <children>
+            <TextField id="textField1" fx:id="address" prefWidth="297.0" text="http://localhost:9300/" />
+            <Button id="button2" onAction="#connect" text="Connect" />
+          </children>
+        </HBox>
+        <Label id="label4" fx:id="connectStatus" prefHeight="22.0" prefWidth="239.0" text="Not Connected" />
+      </children>
+    </HBox>
+  </children>
+  <stylesheets>
+    <URL value="@elasticsearch.css" />
+  </stylesheets>
+</AnchorPane>
