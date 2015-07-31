@@ -1,5 +1,7 @@
 apply plugin: 'application'
 
+sourceCompatibility = 1.8
+
 mainClassName = "ee.elastic.fx.ElasticSearch"
 
 applicationDistribution.from("$rootDir/src/main/dist") { into "." }

@@ -1,3 +1,12 @@
+def _scripts = System.getenv('CG_CM_SCRIPTS_HOME') ?: 'D:/CG/src/cg-cm/cg-cm-scripts'
+ext.scripts = project.hasProperty('superpom') ? project.superpom : "$_scripts/gradlebuild"
+logger.info "Calculated 'superpom' location: $scripts"
+
+File f = null
+try {
+  f = file("$scripts/repos.gradle")
+} catch (e) {}
+
 ext.libs = [
 	'jackson': 'com.fasterxml.jackson.core:jackson-databind:2.6.0',
 	'osito': 'org.osito:osito-javafx:0.0.1-SNAPSHOT'
@@ -10,12 +19,12 @@ allprojects {
 }
 
 subprojects {
-	apply plugin: 'java'
+  apply plugin: 'java'
   apply plugin: 'eclipse'
   apply plugin: 'maven'
   apply plugin: 'maven-publish'
 
-	sourceCompatibility = 1.8
+	sourceCompatibility = 1.7
 
 	[ compileJava, compileTestJava ]*.options*.encoding = 'UTF-8'
 
@@ -23,11 +32,17 @@ subprojects {
 		testCompile 'junit:junit:4.10'
 	}
 
-	repositories {
-		mavenLocal()
-		mavenCentral()
-		maven {	url "https://oss.sonatype.org/content/repositories/releases" }
-		maven { url "http://mirrors.ibiblio.org/maven2" }
+	if(f && f.exists()) {
+		println "Use repos from $f.absolutePath"
+		apply from: f.absolutePath
+	  } else {
+		println "Use default repos"
+		repositories {
+			mavenLocal()
+			mavenCentral()
+			maven {	url "https://oss.sonatype.org/content/repositories/releases" }
+			maven { url "http://mirrors.ibiblio.org/maven2" }
+		}
 	}
 
 	jar {
