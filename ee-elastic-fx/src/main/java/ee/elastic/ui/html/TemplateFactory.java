@@ -1,25 +1,25 @@
 package ee.elastic.ui.html;
 
 public interface TemplateFactory {
-	Element head();
+  Element head();
 
-	Element body();
+  Element body();
 
-	Element span();
+  Element span();
 
-	Element span(String cssClass, String content);
-	
-	Element link(String cssClass, String href, String content);
+  Element span(String cssClass, String content);
 
-	Element style();
-	
-	Element content(String content);
+  Element link(String cssClass, String href, String content);
 
-	Element html();
+  Element style();
 
-	Element page(Element head, Element body);
+  Element content(String content);
 
-	Element div();
+  Element html();
 
-	Element divSpan(String cssClass, String content);
+  Element page(Element head, Element body);
+
+  Element div();
+
+  Element divSpan(String cssClass, String content);
 }

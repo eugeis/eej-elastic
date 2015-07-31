@@ -1,4 +1,5 @@
 package ee.elastic.ui.examples.one;
+
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -25,7 +26,7 @@ public class DatePicker extends StackPane {
 
   // values representing the current date and format.
   private final ReadOnlyObjectWrapper<Date> date = new ReadOnlyObjectWrapper<Date>(new Date());
-  private       SimpleDateFormat      dateFormat = new SimpleDateFormat("MM/dd/yy");
+  private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
   private final ReadOnlyStringWrapper dateString = new ReadOnlyStringWrapper(dateFormat.format(date.get()));
 
   /** @param dateFormat a new formatter for the dateString property.  */
@@ -38,6 +39,7 @@ public class DatePicker extends StackPane {
   public ReadOnlyObjectProperty<Date> dateProperty() {
     return date.getReadOnlyProperty();
   }
+
   /** @return the current value of the selected date object. */
   public Date getDate() {
     return date.get();
@@ -47,6 +49,7 @@ public class DatePicker extends StackPane {
   public ReadOnlyStringProperty dateStringProperty() {
     return dateString.getReadOnlyProperty();
   }
+
   /** @return the current value of a string based date property. */
   public String getDateString() {
     return dateString.get();
@@ -54,14 +57,18 @@ public class DatePicker extends StackPane {
 
   /** helper enum for managing themes. */
   enum Theme {
-    base("base"), blacktie("black-tie"), blitzer("blitzer"), cupertino("cupertino"), dotluv("dot-luv"),
-    excitebike("excite-bike"), hotsneaks("hot-sneaks"), humanity("humanity"), mintchoc("mint-choc"),
-    redmond("redmond"), smoothness("smoothness"), southstreet("south-street"), start("start"), swankypurse("swanky-purse"),
-    trontastic("trontastic"), uidarkness("ui-darkness"), uilightness("ui-lightness"), vader("vader");
+    base("base"), blacktie("black-tie"), blitzer("blitzer"), cupertino("cupertino"), dotluv("dot-luv"), excitebike("excite-bike"), hotsneaks("hot-sneaks"), humanity("humanity"), mintchoc("mint-choc"), redmond("redmond"), smoothness("smoothness"), southstreet("south-street"), start("start"), swankypurse("swanky-purse"), trontastic("trontastic"), uidarkness("ui-darkness"), uilightness("ui-lightness"), vader("vader");
 
     final private String themeName;
-    Theme(String themeName) { this.themeName = themeName; }
-    @Override public String toString() { return themeName; }
+
+    Theme(String themeName) {
+      this.themeName = themeName;
+    }
+
+    @Override
+    public String toString() {
+      return themeName;
+    }
   }
 
   /** @param htmlTemplateUrl refers to html hosted at the specified url used to construct a datepicker. */
@@ -72,10 +79,22 @@ public class DatePicker extends StackPane {
     initPicker(webView);
   }
 
-  public DatePicker()                                                     { this(Theme.redmond); }
-  public DatePicker(Theme theme)                                          { this(theme, null); }
-  public DatePicker(Theme theme, String initJavaScript)                   { this(theme, initJavaScript, null); }
-  public DatePicker(Theme theme, String initJavaScript, String customCSS) { this(theme, initJavaScript, customCSS, null); }
+  public DatePicker() {
+    this(Theme.redmond);
+  }
+
+  public DatePicker(Theme theme) {
+    this(theme, null);
+  }
+
+  public DatePicker(Theme theme, String initJavaScript) {
+    this(theme, initJavaScript, null);
+  }
+
+  public DatePicker(Theme theme, String initJavaScript, String customCSS) {
+    this(theme, initJavaScript, customCSS, null);
+  }
+
   /**
    * constructs a new date picker based upon an inline html template.
    * @param theme to change the look and feel of the date picker.
@@ -94,8 +113,12 @@ public class DatePicker extends StackPane {
   private void initPicker(WebView webView) {
     // attach a handler for an alert function call which will set the DatePicker's date property.
     webView.getEngine().setOnAlert(new EventHandler<WebEvent<String>>() {
-      @Override public void handle(WebEvent<String> event) {
-        try { date.set(jQueryUiDateFormat.parse(event.getData())); } catch (ParseException e) { /* no action required */ }
+      @Override
+      public void handle(WebEvent<String> event) {
+        try {
+          date.set(jQueryUiDateFormat.parse(event.getData()));
+        } catch (ParseException e) { /* no action required */
+        }
       }
     });
 
@@ -104,7 +127,8 @@ public class DatePicker extends StackPane {
 
     // monitor the date for changes and update the formatted date string to keep it in sync.
     date.addListener(new ChangeListener<Date>() {
-      @Override public void changed(ObservableValue<? extends Date> observableValue, Date oldDate, Date newDate) {
+      @Override
+      public void changed(ObservableValue<? extends Date> observableValue, Date oldDate, Date newDate) {
         dateString.set(dateFormat.format(newDate));
       }
     });
@@ -115,28 +139,6 @@ public class DatePicker extends StackPane {
 
   // return an inline html template based upon the provided initialization parameters.
   private String getInlineHtml(Theme theme, String initJavaScript, String customCSS, String googleCdnApiKey) {
-    return
-      "<!DOCTYPE html>" +
-      "<html lang=\"en\">" +
-      "<head>" +
-        "<meta charset=\"utf-8\">" +
-          "<title>jQuery UI Datepicker - Display inline</title>" +
-          (googleCdnApiKey != null ? ("<script type=\"text/javascript\" src=\"https://www.google.com/jsapi?key=" + googleCdnApiKey+ "\"></script>") : "") +
-          "<link rel=\"stylesheet\" href=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/" + theme + "/jquery-ui.css\">" +
-          "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://yui.yahooapis.com/3.4.1/build/cssreset/cssreset-min.css\">" +
-          "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script>" +
-          "<script src=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js\"></script>" +
-          "<style type=\"text/css\">#ui-datepicker-div {display: none;} " + (customCSS != null ? customCSS : "") + "</style>" +
-          "<script>" +
-          "$(function() {" +
-            "$(\"#datepicker\").datepicker({" +
-              "onSelect: function(dateText, inst) { alert(dateText); }" +
-              (initJavaScript != null ? ("," + initJavaScript) : "") +
-            "});" +
-          "});" +
-          "</script>" +
-      "</head>" +
-      "<body><span id=\"datepicker\"></span></body>" +
-      "</html>";
+    return "<!DOCTYPE html>" + "<html lang=\"en\">" + "<head>" + "<meta charset=\"utf-8\">" + "<title>jQuery UI Datepicker - Display inline</title>" + (googleCdnApiKey != null ? ("<script type=\"text/javascript\" src=\"https://www.google.com/jsapi?key=" + googleCdnApiKey + "\"></script>") : "") + "<link rel=\"stylesheet\" href=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/" + theme + "/jquery-ui.css\">" + "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://yui.yahooapis.com/3.4.1/build/cssreset/cssreset-min.css\">" + "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script>" + "<script src=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js\"></script>" + "<style type=\"text/css\">#ui-datepicker-div {display: none;} " + (customCSS != null ? customCSS : "") + "</style>" + "<script>" + "$(function() {" + "$(\"#datepicker\").datepicker({" + "onSelect: function(dateText, inst) { alert(dateText); }" + (initJavaScript != null ? ("," + initJavaScript) : "") + "});" + "});" + "</script>" + "</head>" + "<body><span id=\"datepicker\"></span></body>" + "</html>";
   }
 }

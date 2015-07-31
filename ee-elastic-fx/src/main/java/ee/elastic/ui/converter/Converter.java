@@ -5,7 +5,7 @@ import java.util.Map;
 import ee.elastic.ui.config.ColumnDef;
 
 public interface Converter {
-	void setColumn(ColumnDef column);
+  void setColumn(ColumnDef column);
 
-	Object value(Map<String, Object> source);
+  Object value(Map<String, Object> source);
 }

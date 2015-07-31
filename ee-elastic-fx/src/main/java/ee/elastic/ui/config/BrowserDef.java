@@ -9,25 +9,25 @@ import ee.elastic.ui.integ.Utils;
 
 @SuppressWarnings("rawtypes")
 public class BrowserDef extends MapObject {
-	private static final long serialVersionUID = 1L;
-	private List<ColumnDef> columns;
+  private static final long serialVersionUID = 1L;
+  private List<ColumnDef> columns;
 
-	public BrowserDef(Map source) {
-		super(source);
-	}
+  public BrowserDef(Map source) {
+    super(source);
+  }
 
-	@SuppressWarnings({ "unchecked" })
-	public List<ColumnDef> columns() {
-		if (columns == null) {
-			columns = Utils.transform((Collection<Map>) source.get("columns"), TRANSFORMER);
-		}
-		return columns;
-	}
+  @SuppressWarnings({ "unchecked" })
+  public List<ColumnDef> columns() {
+    if (columns == null) {
+      columns = Utils.transform((Collection<Map>) source.get("columns"), TRANSFORMER);
+    }
+    return columns;
+  }
 
-	private static Func<Map, ColumnDef> TRANSFORMER = new Func<Map, ColumnDef>() {
-		@Override
-		public ColumnDef call(Map source) {
-			return new ColumnDef(source);
-		}
-	};
+  private static Func<Map, ColumnDef> TRANSFORMER = new Func<Map, ColumnDef>() {
+    @Override
+    public ColumnDef call(Map source) {
+      return new ColumnDef(source);
+    }
+  };
 }

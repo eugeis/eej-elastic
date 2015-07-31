@@ -11,47 +11,47 @@ import javafx.scene.layout.Region;
 
 public class SearchBox extends Region {
 
-	private final class SearchBoxListenerDelegate implements ChangeListener<String> {
-		private ChangeListener<String> changeListener;
+  private final class SearchBoxListenerDelegate implements ChangeListener<String> {
+    private ChangeListener<String> changeListener;
 
-		private SearchBoxListenerDelegate(ChangeListener<String> changeListener) {
-			this.changeListener = changeListener;
-		}
+    private SearchBoxListenerDelegate(ChangeListener<String> changeListener) {
+      this.changeListener = changeListener;
+    }
 
-		@Override
-		public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-			clearButton.setVisible(textBox.getText().length() != 0);
-			changeListener.changed(observable, oldValue, newValue);
-		}
-	}
+    @Override
+    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+      clearButton.setVisible(textBox.getText().length() != 0);
+      changeListener.changed(observable, oldValue, newValue);
+    }
+  }
 
-	private TextField textBox;
-	private Button clearButton;
+  private TextField textBox;
+  private Button clearButton;
 
-	public SearchBox(String name, ChangeListener<String> changeListener) {
-		setId("search-" + name);
-		getStyleClass().add("search-box");
-		setMinHeight(24);
-		setPrefSize(200, 24);
-		setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
-		textBox = new TextField();
-		textBox.setPromptText(name);
-		clearButton = new Button();
-		clearButton.setVisible(false);
-		getChildren().addAll(textBox, clearButton);
-		clearButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent actionEvent) {
-				textBox.setText("");
-				textBox.requestFocus();
-			}
-		});
-		textBox.textProperty().addListener(new SearchBoxListenerDelegate(changeListener));
-	}
+  public SearchBox(String name, ChangeListener<String> changeListener) {
+    setId("search-" + name);
+    getStyleClass().add("search-box");
+    setMinHeight(24);
+    setPrefSize(200, 24);
+    setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+    textBox = new TextField();
+    textBox.setPromptText(name);
+    clearButton = new Button();
+    clearButton.setVisible(false);
+    getChildren().addAll(textBox, clearButton);
+    clearButton.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent actionEvent) {
+        textBox.setText("");
+        textBox.requestFocus();
+      }
+    });
+    textBox.textProperty().addListener(new SearchBoxListenerDelegate(changeListener));
+  }
 
-	@Override
-	protected void layoutChildren() {
-		textBox.resize(getWidth(), getHeight());
-		clearButton.resizeRelocate(getWidth() - 18, 6, 12, 13);
-	}
+  @Override
+  protected void layoutChildren() {
+    textBox.resize(getWidth(), getHeight());
+    clearButton.resizeRelocate(getWidth() - 18, 6, 12, 13);
+  }
 }

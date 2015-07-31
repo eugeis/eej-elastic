@@ -12,26 +12,26 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.util.Callback;
 
 @SuppressWarnings("rawtypes")
-public abstract class ValueFactoryAbstract  implements Callback<CellDataFeatures, ObservableValue>{
+public abstract class ValueFactoryAbstract implements Callback<CellDataFeatures, ObservableValue> {
 
-	@SuppressWarnings({ "unchecked" })
-	protected ObservableValue wrapValue(Object obj) {
-		if (obj instanceof ObservableValue)
-			return (ObservableValue) obj;
-		if (obj instanceof Boolean)
-			return new ReadOnlyBooleanWrapper(((Boolean) obj).booleanValue());
-		if (obj instanceof Integer)
-			return new ReadOnlyIntegerWrapper(((Integer) obj).intValue());
-		if (obj instanceof Float)
-			return new ReadOnlyFloatWrapper(((Float) obj).floatValue());
-		if (obj instanceof Long)
-			return new ReadOnlyLongWrapper(((Long) obj).longValue());
-		if (obj instanceof Double)
-			return new ReadOnlyDoubleWrapper(((Double) obj).doubleValue());
-		if (obj instanceof String)
-			return new ReadOnlyStringWrapper((String) obj);
-		else
-			return new ReadOnlyObjectWrapper(obj);
-	}
+  @SuppressWarnings({ "unchecked" })
+  protected ObservableValue wrapValue(Object obj) {
+    if (obj instanceof ObservableValue)
+      return (ObservableValue) obj;
+    if (obj instanceof Boolean)
+      return new ReadOnlyBooleanWrapper(((Boolean) obj).booleanValue());
+    if (obj instanceof Integer)
+      return new ReadOnlyIntegerWrapper(((Integer) obj).intValue());
+    if (obj instanceof Float)
+      return new ReadOnlyFloatWrapper(((Float) obj).floatValue());
+    if (obj instanceof Long)
+      return new ReadOnlyLongWrapper(((Long) obj).longValue());
+    if (obj instanceof Double)
+      return new ReadOnlyDoubleWrapper(((Double) obj).doubleValue());
+    if (obj instanceof String)
+      return new ReadOnlyStringWrapper((String) obj);
+    else
+      return new ReadOnlyObjectWrapper(obj);
+  }
 
 }

@@ -35,117 +35,113 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 * @author Eugen Eisler
 */
 public class IndexAdmin implements Closeable {
-	private static final String indexPropertiesFieldName = "value";
-	private final String index;
-	private final String indexPropertiesType;
+  private static final String indexPropertiesFieldName = "value";
+  private final String index;
+  private final String indexPropertiesType;
 
-	private ElasticAdmin admin;
+  private ElasticAdmin admin;
 
-	public IndexAdmin(String index, ElasticAdmin admin) {
+  public IndexAdmin(String index, ElasticAdmin admin) {
 
-		super();
-		this.index = index;
-		this.indexPropertiesType = index + "_properties_";
-		this.admin = admin;
-	}
+    super();
+    this.index = index;
+    this.indexPropertiesType = index + "_properties_";
+    this.admin = admin;
+  }
 
-	public void connect() {
-		admin.connect();
-	}
+  public void connect() {
+    admin.connect();
+  }
 
-	@Override
-	public void close() {
-		admin.close();
-	}
+  @Override
+  public void close() {
+    admin.close();
+  }
 
-	public Object property(String id) {
+  public Object property(String id) {
 
-		Object ret;
-		GetRequestBuilder builder = prepareGet(this.indexPropertiesType, id);
-		GetResponse response = builder.execute().actionGet();
-		ret = response.isExists() ? response.getSource().get(
-				indexPropertiesFieldName) : null;
-		return ret;
-	}
+    Object ret;
+    GetRequestBuilder builder = prepareGet(this.indexPropertiesType, id);
+    GetResponse response = builder.execute().actionGet();
+    ret = response.isExists() ? response.getSource().get(indexPropertiesFieldName) : null;
+    return ret;
+  }
 
-	public Date propertyAsDate(String id) {
+  public Date propertyAsDate(String id) {
 
-		Date ret = null;
-		Object dateAsObject = property(id);
-		if (dateAsObject != null) {
-			if (dateAsObject instanceof String) {
-				ret = ISODateTimeFormat.dateOptionalTimeParser()
-						.parseDateTime((String) dateAsObject).toDate();
-			} else if (dateAsObject instanceof Date) {
-				ret = (Date) dateAsObject;
-			} else if (dateAsObject instanceof DateTime) {
-				ret = ((DateTime) dateAsObject).toDate();
-			}
-		}
-		return ret;
-	}
+    Date ret = null;
+    Object dateAsObject = property(id);
+    if (dateAsObject != null) {
+      if (dateAsObject instanceof String) {
+        ret = ISODateTimeFormat.dateOptionalTimeParser().parseDateTime((String) dateAsObject).toDate();
+      } else if (dateAsObject instanceof Date) {
+        ret = (Date) dateAsObject;
+      } else if (dateAsObject instanceof DateTime) {
+        ret = ((DateTime) dateAsObject).toDate();
+      }
+    }
+    return ret;
+  }
 
-	public void property(String id, Object value) throws IOException {
+  public void property(String id, Object value) throws IOException {
 
-		XContentBuilder builder = jsonBuilder().startObject();
-		builder.field(indexPropertiesFieldName, value);
-		IndexRequestBuilder requestBuilder = this.prepareIndex(
-				this.indexPropertiesType, id).setSource(builder.endObject());
-		requestBuilder.execute().actionGet();
-	}
+    XContentBuilder builder = jsonBuilder().startObject();
+    builder.field(indexPropertiesFieldName, value);
+    IndexRequestBuilder requestBuilder = this.prepareIndex(this.indexPropertiesType, id).setSource(builder.endObject());
+    requestBuilder.execute().actionGet();
+  }
 
-	public boolean isConnect() {
+  public boolean isConnect() {
 
-		return admin.isConnect();
-	}
+    return admin.isConnect();
+  }
 
-	public Client getClient() {
+  public Client getClient() {
 
-		return admin.client();
-	}
+    return admin.client();
+  }
 
-	public void deleteIndex() {
-		admin.deleteIndex(index);
-	}
+  public void deleteIndex() {
+    admin.deleteIndex(index);
+  }
 
-	public void createIndex(Mapping[] mappingFilesInClassPath) {
-		admin.checkIndex(index);
-	}
+  public void createIndex(Mapping[] mappingFilesInClassPath) {
+    admin.checkIndex(index);
+  }
 
-	public void createMappings(Mapping[] mappingFilesInClassPath) {
-		admin.createMappings(index, mappingFilesInClassPath);
-	}
+  public void createMappings(Mapping[] mappingFilesInClassPath) {
+    admin.createMappings(index, mappingFilesInClassPath);
+  }
 
-	public void recreateIndex(Mapping[] mappingFilesInClassPath) {
-		admin.recreateIndex(index, mappingFilesInClassPath);
-	}
+  public void recreateIndex(Mapping[] mappingFilesInClassPath) {
+    admin.recreateIndex(index, mappingFilesInClassPath);
+  }
 
-	public void refeshIndex() {
-		admin.refeshIndex(index);
-	}
+  public void refeshIndex() {
+    admin.refeshIndex(index);
+  }
 
-	public boolean checkIndex() {
-		return admin.checkIndex(index);
-	}
+  public boolean checkIndex() {
+    return admin.checkIndex(index);
+  }
 
-	public IndexRequestBuilder prepareIndex(String type, String id) {
+  public IndexRequestBuilder prepareIndex(String type, String id) {
 
-		return getClient().prepareIndex(this.index, type, id);
-	}
+    return getClient().prepareIndex(this.index, type, id);
+  }
 
-	public GetRequestBuilder prepareGet(String type, String id) {
+  public GetRequestBuilder prepareGet(String type, String id) {
 
-		return getClient().prepareGet(this.index, type, id);
-	}
+    return getClient().prepareGet(this.index, type, id);
+  }
 
-	public SearchRequestBuilder prepareSearch() {
+  public SearchRequestBuilder prepareSearch() {
 
-		return getClient().prepareSearch(this.index).setSearchType(
-				SearchType.DFS_QUERY_THEN_FETCH);
-	}
+    return getClient().prepareSearch(this.index).setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
+  }
 
-	public IndexRequestBuilder prepareIndex(String type) {
+  public IndexRequestBuilder prepareIndex(String type) {
 
-		return getClient().prepareIndex(this.index, type);
-	}
+    return getClient().prepareIndex(this.index, type);
+  }
 }

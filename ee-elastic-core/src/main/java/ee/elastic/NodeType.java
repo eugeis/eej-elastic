@@ -19,5 +19,5 @@ package ee.elastic;
 * @author Eugen Eisler
 */
 public enum NodeType {
-	Local, Client, Transport;
+  Local, Client, Transport;
 }

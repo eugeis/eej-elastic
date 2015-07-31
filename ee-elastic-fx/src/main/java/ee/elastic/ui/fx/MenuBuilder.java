@@ -14,47 +14,44 @@ import javafx.util.Callback;
 import ee.elastic.ui.config.ColumnDef;
 
 @SuppressWarnings("rawtypes")
-public class MenuBuilder implements Callback<TableColumn, ContextMenu>,
-		ChangeListener<List<ColumnDef>> {
-	private ContextMenu menu;
-	private EventHandler<ActionEvent> click;
-	private List<ColumnDef> columns;
-	private Pattern filePathMatcher = Pattern
-			.compile("([A-Za-z]:|((//|\\\\\\\\)[A-Za-z])).*");
+public class MenuBuilder implements Callback<TableColumn, ContextMenu>, ChangeListener<List<ColumnDef>> {
+  private ContextMenu menu;
+  private EventHandler<ActionEvent> click;
+  private List<ColumnDef> columns;
+  private Pattern filePathMatcher = Pattern.compile("([A-Za-z]:|((//|\\\\\\\\)[A-Za-z])).*");
 
-	public MenuBuilder(EventHandler<ActionEvent> click) {
-		super();
-		this.click = click;
-	}
+  public MenuBuilder(EventHandler<ActionEvent> click) {
+    super();
+    this.click = click;
+  }
 
-	@Override
-	public ContextMenu call(TableColumn column) {
-		if (menu == null) {
-			build();
-		}
-		return menu;
-	}
+  @Override
+  public ContextMenu call(TableColumn column) {
+    if (menu == null) {
+      build();
+    }
+    return menu;
+  }
 
-	private void build() {
-		// Create a context menu
-		menu = new ContextMenu();
-		for (ColumnDef columnDef : columns) {
-			//if (isFilePath(columnDef.label())) {
-				MenuItem item = new MenuItem(columnDef.label());
-				item.setOnAction(click);
-				menu.getItems().addAll(item);
-			//}
-		}
-	}
+  private void build() {
+    // Create a context menu
+    menu = new ContextMenu();
+    for (ColumnDef columnDef : columns) {
+      //if (isFilePath(columnDef.label())) {
+      MenuItem item = new MenuItem(columnDef.label());
+      item.setOnAction(click);
+      menu.getItems().addAll(item);
+      //}
+    }
+  }
 
-	@Override
-	public void changed(ObservableValue<? extends List<ColumnDef>> value,
-			List<ColumnDef> oldColumns, List<ColumnDef> columns) {
-		this.columns = columns;
-		menu = null;
-	}
+  @Override
+  public void changed(ObservableValue<? extends List<ColumnDef>> value, List<ColumnDef> oldColumns, List<ColumnDef> columns) {
+    this.columns = columns;
+    menu = null;
+  }
 
-	private boolean isFilePath(String stringValue) {
-		return filePathMatcher.matcher(stringValue).matches();
-	}
+  private boolean isFilePath(String stringValue) {
+    return filePathMatcher.matcher(stringValue).matches();
+  }
 }

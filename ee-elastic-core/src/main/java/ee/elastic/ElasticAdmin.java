@@ -53,162 +53,161 @@ import org.elasticsearch.node.Node;
 */
 public class ElasticAdmin implements Closeable {
 
-	private Node node;
-	private Client client;
-	private NodeType nodeType;
+  private Node node;
+  private Client client;
+  private NodeType nodeType;
 
-	public ElasticAdmin(NodeType nodeType) {
+  public ElasticAdmin(NodeType nodeType) {
 
-		super();
-		this.nodeType = nodeType;
-	}
+    super();
+    this.nodeType = nodeType;
+  }
 
-	public ElasticAdmin() {
+  public ElasticAdmin() {
 
-		this(NodeType.Transport);
-	}
+    this(NodeType.Transport);
+  }
 
-	public void connect() {
+  public void connect() {
 
-		if (NodeType.Local == this.nodeType) {
-			node = nodeBuilder().local(true).node();
-			client = node.client();
-		} else if (NodeType.Client == this.nodeType) {
-			node = nodeBuilder().client(true).node();
-			client = node.client();
-		} else if (NodeType.Transport == this.nodeType) {
-			client = new TransportClient();
-		}
-	}
+    if (NodeType.Local == this.nodeType) {
+      node = nodeBuilder().local(true).node();
+      client = node.client();
+    } else if (NodeType.Client == this.nodeType) {
+      node = nodeBuilder().client(true).node();
+      client = node.client();
+    } else if (NodeType.Transport == this.nodeType) {
+      client = new TransportClient();
+    }
+  }
 
-	public void addTransportAddress(URL url) {
-		if (client instanceof TransportClient) {
-			InetSocketTransportAddress address = new InetSocketTransportAddress(url.getHost(), url.getPort());
-			TransportClient transportClient = (TransportClient) client;
-			try {
-				transportClient.addTransportAddress(address);
-			} catch (RuntimeException runtimeException) {
-				transportClient.removeTransportAddress(address);
-				throw runtimeException;
-			} catch (Exception exception) {
-				transportClient.removeTransportAddress(address);
-				throw new RuntimeException(exception);
-			}
-		}
-	}
+  public void addTransportAddress(URL url) {
+    if (client instanceof TransportClient) {
+      InetSocketTransportAddress address = new InetSocketTransportAddress(url.getHost(), url.getPort());
+      TransportClient transportClient = (TransportClient) client;
+      try {
+        transportClient.addTransportAddress(address);
+      } catch (RuntimeException runtimeException) {
+        transportClient.removeTransportAddress(address);
+        throw runtimeException;
+      } catch (Exception exception) {
+        transportClient.removeTransportAddress(address);
+        throw new RuntimeException(exception);
+      }
+    }
+  }
 
-	@Override
-	public void close() {
+  @Override
+  public void close() {
 
-		if (isConnect()) {
-			if (client != null) {
-				client.close();
-			}
+    if (isConnect()) {
+      if (client != null) {
+        client.close();
+      }
 
-			if (node != null) {
-				node.close();
-				node = null;
-			}
+      if (node != null) {
+        node.close();
+        node = null;
+      }
 
-		}
-	}
+    }
+  }
 
-	public boolean isConnect() {
+  public boolean isConnect() {
 
-		return client != null;
-	}
+    return client != null;
+  }
 
-	public ClusterHealthStatus healthStatus() {
-		ClusterHealthStatus ret = ClusterHealthStatus.RED;
-		if (isConnect()) {
-			ClusterHealthResponse response = client.admin().cluster().health(new ClusterHealthRequest()).actionGet();
-			ret = response.getStatus();
-		}
-		return ret;
-	}
+  public ClusterHealthStatus healthStatus() {
+    ClusterHealthStatus ret = ClusterHealthStatus.RED;
+    if (isConnect()) {
+      ClusterHealthResponse response = client.admin().cluster().health(new ClusterHealthRequest()).actionGet();
+      ret = response.getStatus();
+    }
+    return ret;
+  }
 
-	public Client client() {
+  public Client client() {
 
-		return client;
-	}
+    return client;
+  }
 
-	public ClusterState state() {
-		ClusterStateResponse ret = client.admin().cluster().state(new ClusterStateRequest()).actionGet();
-		return ret.getState();
-	}
+  public ClusterState state() {
+    ClusterStateResponse ret = client.admin().cluster().state(new ClusterStateRequest()).actionGet();
+    return ret.getState();
+  }
 
-	public Map<String, IndexStatus> status() {
-		IndicesStatusResponse ret = client.admin().indices().status(new IndicesStatusRequest()).actionGet();
-		return ret.getIndices();
-	}
+  public Map<String, IndexStatus> status() {
+    IndicesStatusResponse ret = client.admin().indices().status(new IndicesStatusRequest()).actionGet();
+    return ret.getIndices();
+  }
 
-	public Map<String, IndexStats> stats() {
-		IndicesStatsResponse ret = client.admin().indices().stats(new IndicesStatsRequest()).actionGet();
-		return ret.getIndices();
-	}
+  public Map<String, IndexStats> stats() {
+    IndicesStatsResponse ret = client.admin().indices().stats(new IndicesStatsRequest()).actionGet();
+    return ret.getIndices();
+  }
 
-	public void createMappings(String index, Mapping[] mappingFilesInClassPath) {
-		try {
-			if (mappingFilesInClassPath != null) {
-				for (Mapping mappingFileInClassPath : mappingFilesInClassPath) {
-					String mapping = copyToStringFromClasspath(mappingFileInClassPath.getFile());
-					String type = mappingFileInClassPath.getName();
-					putMapping(index, type, mapping);
-				}
-			}
-		} catch (IOException e) {
-			throw new IllegalPathStateException(e.getMessage());
-		}
-	}
+  public void createMappings(String index, Mapping[] mappingFilesInClassPath) {
+    try {
+      if (mappingFilesInClassPath != null) {
+        for (Mapping mappingFileInClassPath : mappingFilesInClassPath) {
+          String mapping = copyToStringFromClasspath(mappingFileInClassPath.getFile());
+          String type = mappingFileInClassPath.getName();
+          putMapping(index, type, mapping);
+        }
+      }
+    } catch (IOException e) {
+      throw new IllegalPathStateException(e.getMessage());
+    }
+  }
 
-	public void putMapping(String index, String type, String mapping) {
-		PutMappingRequest putMappingRequest = putMappingRequest(index).type(type).source(mapping);
-		PutMappingResponse response = client.admin().indices().putMapping(putMappingRequest).actionGet();
-		System.out.println("Mapping updated? = " + response.isAcknowledged());
-	}
+  public void putMapping(String index, String type, String mapping) {
+    PutMappingRequest putMappingRequest = putMappingRequest(index).type(type).source(mapping);
+    PutMappingResponse response = client.admin().indices().putMapping(putMappingRequest).actionGet();
+    System.out.println("Mapping updated? = " + response.isAcknowledged());
+  }
 
-	public void putMapping(String index, String type, Map<?, ?> mapping) {
-		PutMappingRequest putMappingRequest = putMappingRequest(index).type(type).source(mapping);
-		PutMappingResponse response = client.admin().indices().putMapping(putMappingRequest).actionGet();
-		System.out.println("Mapping updated? = " + response.isAcknowledged());
-	}
+  public void putMapping(String index, String type, Map<?, ?> mapping) {
+    PutMappingRequest putMappingRequest = putMappingRequest(index).type(type).source(mapping);
+    PutMappingResponse response = client.admin().indices().putMapping(putMappingRequest).actionGet();
+    System.out.println("Mapping updated? = " + response.isAcknowledged());
+  }
 
-	public void createIndex(String index, Mapping[] mappingFilesInClassPath) {
+  public void createIndex(String index, Mapping[] mappingFilesInClassPath) {
 
-		@SuppressWarnings("unused")
-		CreateIndexResponse response = client.admin().indices().create(createIndexRequest(index)).actionGet();
-		if (checkIndex(index)) {
-			createMappings(index, mappingFilesInClassPath);
-		} else {
-			deleteIndex(index);
-			throw new IllegalStateException("Index don't exist");
-		}
-	}
+    @SuppressWarnings("unused")
+    CreateIndexResponse response = client.admin().indices().create(createIndexRequest(index)).actionGet();
+    if (checkIndex(index)) {
+      createMappings(index, mappingFilesInClassPath);
+    } else {
+      deleteIndex(index);
+      throw new IllegalStateException("Index don't exist");
+    }
+  }
 
-	public void deleteIndex(String index) {
+  public void deleteIndex(String index) {
 
-		try {
-			client.admin().indices().delete(deleteIndexRequest(index)).actionGet();
-		} catch (Exception e) {
-			// nothing
-		}
-	}
+    try {
+      client.admin().indices().delete(deleteIndexRequest(index)).actionGet();
+    } catch (Exception e) {
+      // nothing
+    }
+  }
 
-	public void recreateIndex(String index, Mapping[] mappingFilesInClassPath) {
+  public void recreateIndex(String index, Mapping[] mappingFilesInClassPath) {
 
-		deleteIndex(index);
-		createIndex(index, mappingFilesInClassPath);
-	}
+    deleteIndex(index);
+    createIndex(index, mappingFilesInClassPath);
+  }
 
-	public void refeshIndex(String index) {
+  public void refeshIndex(String index) {
 
-		client.admin().indices().refresh(refreshRequest(index)).actionGet();
-	}
+    client.admin().indices().refresh(refreshRequest(index)).actionGet();
+  }
 
-	public boolean checkIndex(String index) {
+  public boolean checkIndex(String index) {
 
-		ClusterHealthResponse response =
-			client.admin().cluster().health(new ClusterHealthRequest(index).waitForYellowStatus()).actionGet();
-		return response.getIndices().containsKey(index);
-	}
+    ClusterHealthResponse response = client.admin().cluster().health(new ClusterHealthRequest(index).waitForYellowStatus()).actionGet();
+    return response.getIndices().containsKey(index);
+  }
 }

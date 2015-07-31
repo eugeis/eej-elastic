@@ -6,23 +6,26 @@ import ee.elastic.ui.core.View;
 
 public abstract class BaseView<P extends Parent, D> implements View<P, D> {
 
-	protected ViewDef viewDef;
-	protected P root;
+  protected ViewDef viewDef;
+  protected P root;
 
-	public BaseView() {
-		super();
-	}
+  public BaseView() {
+    super();
+  }
 
-	public ViewDef viewDef() {
-		return viewDef;
-	}
+  @Override
+  public ViewDef viewDef() {
+    return viewDef;
+  }
 
-	public void viewDef(ViewDef view) {
-		this.viewDef = view;
-	}
+  @Override
+  public void viewDef(ViewDef view) {
+    this.viewDef = view;
+  }
 
-	public P root() {
-		return root;
-	}
+  @Override
+  public P root() {
+    return root;
+  }
 
 }

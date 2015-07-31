@@ -4,11 +4,11 @@ import javafx.scene.Parent;
 import ee.elastic.ui.config.ViewDef;
 
 public interface View<P extends Parent, E> {
-	void data(E data);
+  void data(E data);
 
-	P root();
+  P root();
 
-	ViewDef viewDef();
+  ViewDef viewDef();
 
-	void viewDef(ViewDef viewDef);
+  void viewDef(ViewDef viewDef);
 }
