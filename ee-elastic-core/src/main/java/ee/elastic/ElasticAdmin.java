@@ -15,18 +15,17 @@
  */
 package ee.elastic;
 
-import static org.elasticsearch.client.Requests.createIndexRequest;
-import static org.elasticsearch.client.Requests.deleteIndexRequest;
-import static org.elasticsearch.client.Requests.putMappingRequest;
-import static org.elasticsearch.client.Requests.refreshRequest;
-import static org.elasticsearch.common.io.Streams.copyToStringFromClasspath;
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+import static org.elasticsearch.client.Requests.*;
+import static org.elasticsearch.common.io.Streams.*;
+import static org.elasticsearch.node.NodeBuilder.*;
 
 import java.awt.geom.IllegalPathStateException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
@@ -45,6 +44,7 @@ import org.elasticsearch.action.admin.indices.status.IndicesStatusResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.ClusterState;
+import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
 
@@ -56,11 +56,13 @@ public class ElasticAdmin implements Closeable {
   private Node node;
   private Client client;
   private NodeType nodeType;
+  private Map<String, Integer> hostToPort;
 
   public ElasticAdmin(NodeType nodeType) {
 
     super();
     this.nodeType = nodeType;
+    hostToPort = new HashMap<>();
   }
 
   public ElasticAdmin() {
@@ -69,21 +71,36 @@ public class ElasticAdmin implements Closeable {
   }
 
   public void connect() {
-
-    if (NodeType.Local == this.nodeType) {
+    if (NodeType.Local == nodeType) {
       node = nodeBuilder().local(true).node();
       client = node.client();
-    } else if (NodeType.Client == this.nodeType) {
-      node = nodeBuilder().client(true).node();
+    } else if (NodeType.Client == nodeType) {
+      node = nodeBuilder().settings(ImmutableSettings.settingsBuilder().put("http.enabled", false)).client(true).node();
       client = node.client();
-    } else if (NodeType.Transport == this.nodeType) {
+    } else if (NodeType.Transport == nodeType) {
       client = new TransportClient();
+    }
+    bindAddresses();
+  }
+
+  protected void bindAddresses() {
+    for (Entry<String, Integer> hostPort : hostToPort.entrySet()) {
+      bindAddress(hostPort.getKey(), hostPort.getValue());
     }
   }
 
   public void addTransportAddress(URL url) {
+    addServerAddress(url.getHost(), url.getPort());
+  }
+
+  public void addServerAddress(String host, int port) {
+    hostToPort.put(host, port);
+    bindAddress(host, port);
+  }
+
+  protected void bindAddress(String host, int port) {
     if (client instanceof TransportClient) {
-      InetSocketTransportAddress address = new InetSocketTransportAddress(url.getHost(), url.getPort());
+      InetSocketTransportAddress address = new InetSocketTransportAddress(host, port);
       TransportClient transportClient = (TransportClient) client;
       try {
         transportClient.addTransportAddress(address);
@@ -130,6 +147,10 @@ public class ElasticAdmin implements Closeable {
   public Client client() {
 
     return client;
+  }
+
+  public NodeType getNodeType() {
+    return nodeType;
   }
 
   public ClusterState state() {
