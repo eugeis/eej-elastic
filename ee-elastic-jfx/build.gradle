@@ -1,7 +1,5 @@
 apply plugin: 'application'
 
-sourceCompatibility = 1.8
-
 mainClassName = "ee.elastic.fx.ElasticSearch"
 
 applicationDistribution.from("$rootDir/src/main/dist") { into "." }
@@ -10,8 +8,6 @@ dependencies {
   compile project(':ee-elastic-core')
   compile libs.jackson
   //	compile libs.osito
-  
-  compile 'org.controlsfx:controlsfx:8.40.9'
 }
 
 repositories {
