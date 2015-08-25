@@ -15,9 +15,12 @@
  */
 package ee.elastic;
 
-import static org.elasticsearch.client.Requests.*;
-import static org.elasticsearch.common.io.Streams.*;
-import static org.elasticsearch.node.NodeBuilder.*;
+import static org.elasticsearch.client.Requests.createIndexRequest;
+import static org.elasticsearch.client.Requests.deleteIndexRequest;
+import static org.elasticsearch.client.Requests.putMappingRequest;
+import static org.elasticsearch.client.Requests.refreshRequest;
+import static org.elasticsearch.common.io.Streams.copyToStringFromClasspath;
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 import java.awt.geom.IllegalPathStateException;
 import java.io.Closeable;
@@ -49,9 +52,10 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
 
 /**
-* @author Eugen Eisler
-*/
+ * @author Eugen Eisler
+ */
 public class ElasticAdmin implements Closeable {
+  public static final String ADDRESSES = "addresses";
 
   private Node node;
   private Client client;
@@ -63,10 +67,10 @@ public class ElasticAdmin implements Closeable {
     super();
     this.nodeType = nodeType;
     hostToPort = new HashMap<>();
+    fillAddresses();
   }
 
   public ElasticAdmin() {
-
     this(NodeType.Transport);
   }
 
@@ -75,7 +79,10 @@ public class ElasticAdmin implements Closeable {
       node = nodeBuilder().local(true).node();
       client = node.client();
     } else if (NodeType.Client == nodeType) {
-      node = nodeBuilder().settings(ImmutableSettings.settingsBuilder().put("http.enabled", false)).client(true).node();
+      node = nodeBuilder()
+          .settings(
+              ImmutableSettings.settingsBuilder().put("http.enabled", false))
+          .client(true).node();
       client = node.client();
     } else if (NodeType.Transport == nodeType) {
       client = new TransportClient();
@@ -86,6 +93,16 @@ public class ElasticAdmin implements Closeable {
   protected void bindAddresses() {
     for (Entry<String, Integer> hostPort : hostToPort.entrySet()) {
       bindAddress(hostPort.getKey(), hostPort.getValue());
+    }
+  }
+
+  private void fillAddresses() {
+    String addresses = System.getProperty(ADDRESSES, null);
+    if (addresses != null) {
+      for (String address : addresses.split(",")) {
+        String[] hostAndPort = address.split(":");
+        addServerAddress(hostAndPort[0], Integer.parseInt(hostAndPort[1]));
+      }
     }
   }
 
@@ -100,7 +117,8 @@ public class ElasticAdmin implements Closeable {
 
   protected void bindAddress(String host, int port) {
     if (client instanceof TransportClient) {
-      InetSocketTransportAddress address = new InetSocketTransportAddress(host, port);
+      InetSocketTransportAddress address = new InetSocketTransportAddress(host,
+          port);
       TransportClient transportClient = (TransportClient) client;
       try {
         transportClient.addTransportAddress(address);
@@ -138,7 +156,8 @@ public class ElasticAdmin implements Closeable {
   public ClusterHealthStatus healthStatus() {
     ClusterHealthStatus ret = ClusterHealthStatus.RED;
     if (isConnect()) {
-      ClusterHealthResponse response = client.admin().cluster().health(new ClusterHealthRequest()).actionGet();
+      ClusterHealthResponse response = client.admin().cluster()
+          .health(new ClusterHealthRequest()).actionGet();
       ret = response.getStatus();
     }
     return ret;
@@ -154,17 +173,20 @@ public class ElasticAdmin implements Closeable {
   }
 
   public ClusterState state() {
-    ClusterStateResponse ret = client.admin().cluster().state(new ClusterStateRequest()).actionGet();
+    ClusterStateResponse ret = client.admin().cluster()
+        .state(new ClusterStateRequest()).actionGet();
     return ret.getState();
   }
 
   public Map<String, IndexStatus> status() {
-    IndicesStatusResponse ret = client.admin().indices().status(new IndicesStatusRequest()).actionGet();
+    IndicesStatusResponse ret = client.admin().indices()
+        .status(new IndicesStatusRequest()).actionGet();
     return ret.getIndices();
   }
 
   public Map<String, IndexStats> stats() {
-    IndicesStatsResponse ret = client.admin().indices().stats(new IndicesStatsRequest()).actionGet();
+    IndicesStatsResponse ret = client.admin().indices()
+        .stats(new IndicesStatsRequest()).actionGet();
     return ret.getIndices();
   }
 
@@ -172,7 +194,8 @@ public class ElasticAdmin implements Closeable {
     try {
       if (mappingFilesInClassPath != null) {
         for (Mapping mappingFileInClassPath : mappingFilesInClassPath) {
-          String mapping = copyToStringFromClasspath(mappingFileInClassPath.getFile());
+          String mapping = copyToStringFromClasspath(mappingFileInClassPath
+              .getFile());
           String type = mappingFileInClassPath.getName();
           putMapping(index, type, mapping);
         }
@@ -183,21 +206,26 @@ public class ElasticAdmin implements Closeable {
   }
 
   public void putMapping(String index, String type, String mapping) {
-    PutMappingRequest putMappingRequest = putMappingRequest(index).type(type).source(mapping);
-    PutMappingResponse response = client.admin().indices().putMapping(putMappingRequest).actionGet();
+    PutMappingRequest putMappingRequest = putMappingRequest(index).type(type)
+        .source(mapping);
+    PutMappingResponse response = client.admin().indices()
+        .putMapping(putMappingRequest).actionGet();
     System.out.println("Mapping updated? = " + response.isAcknowledged());
   }
 
   public void putMapping(String index, String type, Map<?, ?> mapping) {
-    PutMappingRequest putMappingRequest = putMappingRequest(index).type(type).source(mapping);
-    PutMappingResponse response = client.admin().indices().putMapping(putMappingRequest).actionGet();
+    PutMappingRequest putMappingRequest = putMappingRequest(index).type(type)
+        .source(mapping);
+    PutMappingResponse response = client.admin().indices()
+        .putMapping(putMappingRequest).actionGet();
     System.out.println("Mapping updated? = " + response.isAcknowledged());
   }
 
   public void createIndex(String index, Mapping[] mappingFilesInClassPath) {
 
     @SuppressWarnings("unused")
-    CreateIndexResponse response = client.admin().indices().create(createIndexRequest(index)).actionGet();
+    CreateIndexResponse response = client.admin().indices()
+        .create(createIndexRequest(index)).actionGet();
     if (checkIndex(index)) {
       createMappings(index, mappingFilesInClassPath);
     } else {
@@ -228,7 +256,9 @@ public class ElasticAdmin implements Closeable {
 
   public boolean checkIndex(String index) {
 
-    ClusterHealthResponse response = client.admin().cluster().health(new ClusterHealthRequest(index).waitForYellowStatus()).actionGet();
+    ClusterHealthResponse response = client.admin().cluster()
+        .health(new ClusterHealthRequest(index).waitForYellowStatus())
+        .actionGet();
     return response.getIndices().containsKey(index);
   }
 }

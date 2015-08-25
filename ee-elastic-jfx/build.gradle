@@ -1,0 +1,33 @@
+apply plugin: 'application'
+
+mainClassName = "ee.elastic.fx.ElasticSearch"
+
+applicationDistribution.from("$rootDir/src/main/dist") { into "." }
+
+dependencies {
+  compile project(':ee-elastic-core')
+  compile libs.jackson
+  //	compile libs.osito
+}
+
+repositories {
+  // the flatDir repository is used to resolve the jfxrt.jar file
+  // that's bundled with the currently used jdk
+  flatDir dirs: System.getProperty("java.home") + "/lib/"
+
+  ivy { artifactPattern 'http://gradle-macappbundle.googlecode.com/files/[module]-[revision].[ext]' }
+}
+
+task uploadDistZip (dependsOn:distZip) {
+  def srcFile = file("$buildDir/distributions/${applicationName}-${version}.zip")
+  def destDir = 'S:/tools/'
+  inputs.file srcFile
+  outputs.dir destDir
+
+  doLast {
+    copy {
+      from(srcFile)
+      into(destDir)
+    }
+  }
+}
