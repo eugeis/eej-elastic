@@ -10,7 +10,7 @@ dependencies {
   compile project(':ee-elastic-core')
   compile libs.jackson
   //	compile libs.osito
-  
+
   compile 'org.controlsfx:controlsfx:8.40.9'
 }
 
@@ -21,16 +21,17 @@ dependencies {
   //  ivy { artifactPattern 'http://gradle-macappbundle.googlecode.com/files/[module]-[revision].[ext]' }
 //}
 
-task uploadDistZip (dependsOn:distZip) {
+task installToDir (dependsOn:distZip) {
   def srcFile = file("$buildDir/distributions/${applicationName}-${version}.zip")
-  def destDir = 'S:/tools/'
+  def destDir = "D:/t"
+
   inputs.file srcFile
-  outputs.dir destDir
+  outputs.dir "$destDir/${applicationName}-${version}"
 
   doLast {
     copy {
-      from(srcFile)
-      into(destDir)
+      from zipTree(srcFile)
+      into file(destDir)
     }
   }
 }

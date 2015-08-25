@@ -15,12 +15,9 @@
  */
 package ee.elastic;
 
-import static org.elasticsearch.client.Requests.createIndexRequest;
-import static org.elasticsearch.client.Requests.deleteIndexRequest;
-import static org.elasticsearch.client.Requests.putMappingRequest;
-import static org.elasticsearch.client.Requests.refreshRequest;
-import static org.elasticsearch.common.io.Streams.copyToStringFromClasspath;
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+import static org.elasticsearch.client.Requests.*;
+import static org.elasticsearch.common.io.Streams.*;
+import static org.elasticsearch.node.NodeBuilder.*;
 
 import java.awt.geom.IllegalPathStateException;
 import java.io.Closeable;
