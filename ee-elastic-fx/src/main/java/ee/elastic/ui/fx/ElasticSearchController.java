@@ -147,6 +147,7 @@ public class ElasticSearchController implements Initializable {
   public void initialize(URL location, ResourceBundle resources) {
     addSelectedIndexListener();
     addSelectedRowListener();
+    resultTable.setFixedCellSize(30.0);
   }
 
   @SuppressWarnings("unchecked")

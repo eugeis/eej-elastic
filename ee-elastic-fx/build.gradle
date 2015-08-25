@@ -12,13 +12,12 @@ dependencies {
   //	compile libs.osito
 }
 
-repositories {
+//repositories {
   // the flatDir repository is used to resolve the jfxrt.jar file
   // that's bundled with the currently used jdk
-  flatDir dirs: System.getProperty("java.home") + "/lib/"
-
-  ivy { artifactPattern 'http://gradle-macappbundle.googlecode.com/files/[module]-[revision].[ext]' }
-}
+  //  flatDir dirs: System.getProperty("java.home") + "/lib/"
+  //  ivy { artifactPattern 'http://gradle-macappbundle.googlecode.com/files/[module]-[revision].[ext]' }
+//}
 
 task uploadDistZip (dependsOn:distZip) {
   def srcFile = file("$buildDir/distributions/${applicationName}-${version}.zip")
